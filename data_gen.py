@@ -1,10 +1,9 @@
 import random
 import copy
-import json
 
 EMPTY = 0
-X = 1
-O = 2
+P1 = 1
+P2 = 2
 
 def check_winner(board):
     wins = [
@@ -22,12 +21,12 @@ def check_winner(board):
 def minimax(board, is_maximizing):
     winner = check_winner(board)
     if winner is not None:
-        return {X: 1, O: -1, 0: 0}[winner], None
+        return {P1: 1, P2: -1, 0: 0}[winner], None
 
     best_score = float('-inf') if is_maximizing else float('inf')
     best_move = None
 
-    player = X if is_maximizing else O
+    player = P1 if is_maximizing else P2
 
     for i in range(9):
         if board[i] == EMPTY:
@@ -49,14 +48,14 @@ def minimax(board, is_maximizing):
 def generate_random_board():
     board = [EMPTY] * 9
     moves = random.randint(2, 6)
-    turn = X
+    turn = P1
     for _ in range(moves):
         empty_indices = [i for i in range(9) if board[i] == EMPTY]
         if not empty_indices or check_winner(board) is not None:
             break
         move = random.choice(empty_indices)
         board[move] = turn
-        turn = O if turn == X else X
+        turn = P2 if turn == P1 else P1
     return board
 
 def get_optimal_move_vector(board):
@@ -73,13 +72,10 @@ def generate_dataset(n=1000):
         while True:
             board = generate_random_board()
             if check_winner(board) is None:
-                x_count = board.count(X)
-                o_count = board.count(O)
-                if x_count == o_count:
+                p1_count = board.count(P1)
+                p2_count = board.count(P2)
+                if p1_count == p2_count:
                     break
         move_vector = get_optimal_move_vector(board)
         data.append((board, move_vector))
     return data
-
-
-
